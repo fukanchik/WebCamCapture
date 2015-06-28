@@ -1,4 +1,4 @@
-package com.jsjrobotics;
+package com.jsjrobotics.server;
 
 import java.io.IOException;
 import java.net.DatagramPacket;

@@ -1,46 +1,31 @@
 package com.jsjrobotics;
 
 import com.github.sarxos.webcam.Webcam;
+import com.jsjrobotics.server.CameraThread;
+import com.jsjrobotics.server.ConnectedListener;
+import com.jsjrobotics.server.TcpServer;
+import com.jsjrobotics.server.TrasmitController;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
+import java.util.List;
 
 public class Main {
+    /**
+     * TODO: Single instance is returned from server on connection, only 1 client can connect
+     */
     private static TcpServer server;
 
-    private static Thread transmitThread = new Thread(new Runnable() {
-        @Override
-        public void run() {
-            Webcam webcam = Webcam.getDefault();
-            webcam.open();
-            int[] buffer = null;
-            while(true) {
-                BufferedImage image = webcam.getImage();
-                int width = image.getWidth();
-                int height = image.getHeight();
-                int minBufferSize = width * height;
-                if( buffer == null || buffer.length < minBufferSize){
-                    buffer = new int[minBufferSize];
-                }
-                image.getRGB(0, 0, image.getWidth(), image.getHeight(), buffer, 0, image.getWidth());
-                System.out.println("Width / Height  -  "+image.getWidth() + " - "+image.getHeight());
-                server.transmit(buffer,0,width*height);
-            }
-
-        }
-    });
+    private static TrasmitController trasmitController;
 
     private static ConnectedListener listener = new ConnectedListener() {
         @Override
         public void connectionInitiated() {
-            transmitThread.start();
+            trasmitController.start();
         }
     };
     public static void main(String[] args) throws IOException {
         server = new TcpServer(4445,listener);
+        trasmitController = new TrasmitController("TransmitController", server);
+        server.start();
     }
 }

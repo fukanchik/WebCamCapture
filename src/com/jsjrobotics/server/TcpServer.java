@@ -1,4 +1,4 @@
-package com.jsjrobotics;
+package com.jsjrobotics.server;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -31,7 +31,6 @@ public class TcpServer {
         mPortNumber = port;
         mSocket = new ServerSocket(mPortNumber);
         mListener = listener;
-        serverThread.start();
     }
 
     private boolean isConnected(){
@@ -41,6 +40,9 @@ public class TcpServer {
         return false;
     }
 
+    public void start(){
+        serverThread.start();
+    }
     public void transmit(int[] buffer,int offset,int bytesToWrite){
         if(isConnected()){
             try {
