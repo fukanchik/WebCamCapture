@@ -1,4 +1,4 @@
-package com.jsjrobotics;
+package com.jsjrobotics.server;
 
 import com.jsjrobotics.server.ConnectedListener;
 import com.jsjrobotics.server.TcpServer;
@@ -7,7 +7,7 @@ import com.jsjrobotics.server.TrasmitController;
 import java.io.IOException;
 import java.net.Socket;
 
-public class Main {
+public class ServerMain {
     private static int controllerInstances = 0;
     private static TcpServer server;
 
@@ -16,20 +16,24 @@ public class Main {
     private static ConnectedListener listener = new ConnectedListener() {
         @Override
         public void connectionInitiated(int socketIndex) {
-            if(trasmitController != null && !trasmitController.isAlive()) {
-                trasmitController.start();
-            }
-            else {
-                trasmitController = new TrasmitController("TransmitController"+controllerInstances, server);
-                controllerInstances += 1;
-                trasmitController.start();
-            }
+            launchTransmitController(server);
         }
     };
+
     public static void main(String[] args) throws IOException {
         server = new TcpServer(4445,listener);
-        trasmitController = new TrasmitController("TransmitController"+controllerInstances, server);
-        controllerInstances+=1;
+        launchTransmitController(server);
         server.start();
+    }
+
+    private static void launchTransmitController(TcpServer server){
+        if(trasmitController == null) {
+            trasmitController = new TrasmitController("TransmitController"+controllerInstances, server);
+            controllerInstances += 1;
+            trasmitController.start();
+        }
+        else if(!trasmitController.isAlive()){
+            trasmitController.start();
+        }
     }
 }

@@ -7,12 +7,10 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 
 public class TcpClient {
     private static JFrame frame;
@@ -49,6 +47,9 @@ public class TcpClient {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        finally {
+            frame.dispose();
         }
     }
 
