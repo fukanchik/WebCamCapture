@@ -19,10 +19,10 @@ public class TrasmitController extends Thread {
         super(name);
         this.server = server;
         List<Webcam> webcams = Webcam.getWebcams();
-        camera1 = webcams.size() >= 1 ? new CameraThread(1,server,webcams.get(0)) : null;
-        camera2 = webcams.size() >= 2 ? new CameraThread(2,server,webcams.get(1)) : null;
-        camera3 = webcams.size() >= 3 ? new CameraThread(3,server,webcams.get(2)) : null;
-        camera4 = webcams.size() >= 4 ? new CameraThread(4,server,webcams.get(3)) : null;
+        camera1 = webcams.size() >= 1 ? new CameraThread(1,this,webcams.get(0)) : null;
+        camera2 = webcams.size() >= 2 ? new CameraThread(2,this,webcams.get(1)) : null;
+        camera3 = webcams.size() >= 3 ? new CameraThread(3,this,webcams.get(2)) : null;
+        camera4 = webcams.size() >= 4 ? new CameraThread(4,this,webcams.get(3)) : null;
     }
 
     @Override
@@ -40,5 +40,18 @@ public class TrasmitController extends Thread {
             camera4.start();
         }
 
+    }
+
+    public void transmit(int threadNumber, int[] buffer, int offset, int transmitLength) {
+        int[] data = prependCameraInformation(threadNumber,buffer,offset,transmitLength);
+        server.transmit(data,0,data.length);
+    }
+
+    private int[] prependCameraInformation(int threadNumber, int[] buffer, int offset, int transmitLength) {
+        int[] result = new int[transmitLength];
+        for(int index = 0; index < transmitLength; index++){
+            result[index] = buffer[offset+index];
+        }
+        return result;
     }
 }

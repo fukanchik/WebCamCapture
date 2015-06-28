@@ -8,15 +8,15 @@ import java.awt.image.BufferedImage;
 
 public class CameraThread extends Thread {
     private final Webcam webcam;
-    private final TcpServer server;
+    private final TrasmitController controller;
     private final boolean readyToStart;
     private final int threadNumber;
-    public CameraThread(int threadNumber,TcpServer server,Webcam webcam){
+    public CameraThread(int threadNumber,TrasmitController controller,Webcam webcam){
         super("CameraThread:"+threadNumber);
         this.threadNumber = threadNumber;
         this.webcam = webcam;
-        this.server = server;
-        readyToStart = server != null && webcam != null;
+        this.controller = controller;
+        readyToStart = controller != null && webcam != null;
     }
 
     @Override
@@ -37,8 +37,8 @@ public class CameraThread extends Thread {
                 buffer = new int[minBufferSize];
             }
             image.getRGB(0, 0, image.getWidth(), image.getHeight(), buffer, 0, image.getWidth());
-            System.out.println("Width / Height  -  "+image.getWidth() + " - "+image.getHeight());
-            server.transmit(buffer,0,width*height);
+            //System.out.println("Width / Height  -  "+image.getWidth() + " - "+image.getHeight());
+            controller.transmit(threadNumber,buffer,0,width*height);
         }
     }
 

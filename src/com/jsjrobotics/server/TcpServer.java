@@ -3,24 +3,34 @@ package com.jsjrobotics.server;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TcpServer {
     private final int mPortNumber;
     private final ServerSocket mSocket;
-    private BufferedReader inputReader;
-    private Socket clientSocket = null;
+    private int clientsConnected = -1;
     private final ConnectedListener mListener;
-    private BufferedOutputStream outputStream;
+    private List<Socket> clientSockets = new ArrayList<>();
+    private List<BufferedOutputStream> outputStreams = new ArrayList<>();
+    private List<BufferedReader> inputStreams = new ArrayList<>();
 
     private final Thread serverThread = new Thread(new Runnable() {
         @Override
         public void run() {
             try {
-                clientSocket = mSocket.accept();
-                System.out.println("Client connected");
-                outputStream = new BufferedOutputStream(clientSocket.getOutputStream(),25344);
-                inputReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                mListener.connectionInitiated();
+                while(true) {
+                    System.out.println("Waiting for client");
+                    Socket clientSocket = mSocket.accept();
+                    System.out.println("Client connected");
+                    clientsConnected += 1;
+                    clientSockets.add(clientsConnected, clientSocket);
+                    BufferedOutputStream outputStream = new BufferedOutputStream(clientSocket.getOutputStream(), 25344);
+                    BufferedReader inputReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                    outputStreams.add(clientsConnected, outputStream);
+                    inputStreams.add(clientsConnected, inputReader);
+                    mListener.connectionInitiated(clientsConnected);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -34,7 +44,7 @@ public class TcpServer {
     }
 
     private boolean isConnected(){
-        if(outputStream != null && inputReader != null && clientSocket != null && clientSocket.isConnected()){
+        if(clientSockets.size() > 0){
             return true;
         }
         return false;
@@ -46,10 +56,13 @@ public class TcpServer {
     public void transmit(int[] buffer,int offset,int bytesToWrite){
         if(isConnected()){
             try {
-                for(int index = offset; index < offset+bytesToWrite; index++) {
-                    outputStream.write(buffer[index]);
+                for(int clientIndex = 0; clientIndex < outputStreams.size(); clientIndex++){
+                    BufferedOutputStream client = outputStreams.get(clientIndex);
+                    for(int index = offset; index < offset+bytesToWrite; index++) {
+                        client.write(buffer[index]);
+                    }
                 }
-                System.out.println("Wrote "+bytesToWrite);
+                //System.out.println("Wrote "+bytesToWrite);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -57,4 +70,7 @@ public class TcpServer {
     }
 
 
+    public BufferedOutputStream getClient(int socketIndex) {
+        return outputStreams.get(socketIndex);
+    }
 }
