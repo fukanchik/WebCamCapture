@@ -30,7 +30,7 @@ public class TrasmitController extends Thread {
         if(camera1 != null && camera1.readyToStart()){
             camera1.start();
         }
-        if(camera2 != null && camera2.readyToStart()){
+        /*if(camera2 != null && camera2.readyToStart()){
             camera2.start();
         }
         if(camera3 != null && camera3.readyToStart()){
@@ -38,7 +38,7 @@ public class TrasmitController extends Thread {
         }
         if(camera4 != null && camera4.readyToStart()){
             camera4.start();
-        }
+        }*/
 
     }
 

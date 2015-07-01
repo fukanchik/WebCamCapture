@@ -2,9 +2,11 @@ package com.jsjrobotics.client;
 
 import com.jsjrobotics.ui.UiBuilder;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
@@ -26,7 +28,7 @@ public class TcpClient {
         frame.setVisible(true);
 
         try{
-            InetAddress address = InetAddress.getByName("192.168.1.2");
+            InetAddress address = InetAddress.getByName("10.89.196.77");
             int port = 4445;
             Socket socket = new Socket(address,port);
             InputStream inputStream = socket.getInputStream();
