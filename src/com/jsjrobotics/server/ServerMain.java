@@ -20,7 +20,7 @@ public class ServerMain {
         }
     };
 
-    public static void main(String[] args) throws IOException {
+    public static void startServer() throws IOException {
         server = new TcpServer(4445,listener);
         launchTransmitController(server);
         server.start();

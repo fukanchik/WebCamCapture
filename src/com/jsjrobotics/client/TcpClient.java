@@ -19,7 +19,7 @@ public class TcpClient {
     private static JLabel jLabel;
     private static JPanel panel;
 
-    public static void main(String[] args){
+    public static void startClient(){
         jLabel = new JLabel();
         panel = new JPanel(new GridLayout(0, 2));
         panel.add(jLabel);
