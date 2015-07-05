@@ -12,23 +12,7 @@ import java.io.IOException;
 public class UiBuilder {
     private static int DEFAULT_FRAME_WIDTH = 500;
     private static int DEFAULT_FRAME_HEIGHT = 500;
-    private static Component mainJPanel;
-    private static ActionListener tuningChamberSelectedListener = new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent actionEvent) {
-            JFrame presentation = getClosableFrame();
-            presentation.setTitle("Tuning Chamber");
-            presentation.setVisible(true);
-        }
-    };
-    private static ActionListener presentationPortalSelectedListener = new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent actionEvent) {
-            JFrame presentation = getClosableFrame();
-            presentation.setTitle("Presentation Portal");
-            presentation.setVisible(true);
-        }
-    };
+
 
     public static JFrame buildClientFrame() {
         JFrame frame = getClosableFrame();
@@ -43,7 +27,8 @@ public class UiBuilder {
     }
 
     public static JFrame buildMainSelectionFrame() {
-        JFrame frame = getClosableFrame();
+        JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(DEFAULT_FRAME_WIDTH, DEFAULT_FRAME_HEIGHT);
         frame.getContentPane().add(getMainJPanel());
         return frame;
@@ -69,12 +54,12 @@ public class UiBuilder {
         panel.add(button1);
         panel.add(button2);
         try {
-            BufferedImage selection1 = ImageIO.read(new File("main1.jpg"));
-            BufferedImage selection2 = ImageIO.read(new File("main2.png"));
+            BufferedImage selection1 = ImageIO.read(new File("presentation_portal.png"));
+            BufferedImage selection2 = ImageIO.read(new File("tuning_chamber.png"));
             attachButtonIcon(selection1,button1);
             attachButtonIcon(selection2,button2);
             attachOnClickListener(1,button1);
-            attachOnClickListener(1,button2);
+            attachOnClickListener(2,button2);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -84,12 +69,44 @@ public class UiBuilder {
     private static void attachOnClickListener(int buttonIndex, JButton button) {
         switch (buttonIndex){
             case 1:
-                button.addActionListener(tuningChamberSelectedListener);
+                button.addActionListener(getTuningChamberSelectedListener(button));
                 break;
             case 2:
-                button.addActionListener(presentationPortalSelectedListener);
+                button.addActionListener(getPresentationPortalSelectedListener(button));
                 break;
         }
+    }
+
+    private static ActionListener getPresentationPortalSelectedListener(JButton button) {
+        MainButtonActionListener presentationPortalSelectedListener = new MainButtonActionListener(button) {
+
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                JPopupMenu popup = new JPopupMenu();
+                JMenuItem menuItem = new JMenuItem("Not Implemented");
+                popup.add(menuItem);
+                popup.show(parent,parent.getX(),parent.getY());
+            }
+        };
+        return presentationPortalSelectedListener;
+    }
+
+    private static ActionListener getTuningChamberSelectedListener(JButton button) {
+        MainButtonActionListener tuningChamberSelectedListener = new MainButtonActionListener(button) {
+
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                JPopupMenu popup = new JPopupMenu();
+                JMenuItem menuItem = new JMenuItem("Webcam Server");
+                menuItem.addActionListener(startWebcamServerActionListener);
+                popup.add(menuItem);
+                menuItem = new JMenuItem("Webcam Client");
+                menuItem.addActionListener(startWebcamClientActionListener);
+                popup.add(menuItem);
+                popup.show(parent,parent.getX(),parent.getY());
+            }
+        };
+        return tuningChamberSelectedListener;
     }
 
     private static void attachButtonIcon(BufferedImage selection1, JButton button1) {

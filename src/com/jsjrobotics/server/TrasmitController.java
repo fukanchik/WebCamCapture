@@ -47,7 +47,7 @@ public class TrasmitController extends Thread {
         server.transmit(data,0,data.length);
     }
 
-    private int[] prependCameraInformation(int threadNumber, int[] buffer, int offset, int transmitLength) {
+    public int[] prependCameraInformation(int threadNumber, int[] buffer, int offset, int transmitLength) {
         int[] result = new int[transmitLength];
         for(int index = 0; index < transmitLength; index++){
             result[index] = buffer[offset+index];

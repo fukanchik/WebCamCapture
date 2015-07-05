@@ -8,25 +8,25 @@ import java.io.IOException;
 import java.net.Socket;
 
 public class ServerMain {
-    private static int controllerInstances = 0;
-    private static TcpServer server;
+    private  int controllerInstances = 0;
+    private  TcpServer server;
 
-    private static TrasmitController trasmitController;
+    private  TrasmitController trasmitController;
 
-    private static ConnectedListener listener = new ConnectedListener() {
+    private  ConnectedListener listener = new ConnectedListener() {
         @Override
         public void connectionInitiated(int socketIndex) {
             launchTransmitController(server);
         }
     };
 
-    public static void startServer() throws IOException {
+    public  void start() throws IOException {
         server = new TcpServer(4445,listener);
         launchTransmitController(server);
         server.start();
     }
 
-    private static void launchTransmitController(TcpServer server){
+    private  void launchTransmitController(TcpServer server){
         if(trasmitController == null) {
             trasmitController = new TrasmitController("TransmitController"+controllerInstances, server);
             controllerInstances += 1;

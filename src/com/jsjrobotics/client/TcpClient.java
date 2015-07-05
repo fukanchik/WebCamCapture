@@ -14,12 +14,22 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
-public class TcpClient {
-    private static JFrame frame;
-    private static JLabel jLabel;
-    private static JPanel panel;
+public class TcpClient{
+    private  JFrame frame;
+    private  JLabel jLabel;
+    private  JPanel panel;
 
-    public static void startClient(){
+    public  void start(){
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                startClient();
+            }
+        };
+        Thread t = new Thread(r);
+        t.start();
+    }
+    private  void startClient(){
         jLabel = new JLabel();
         panel = new JPanel(new GridLayout(0, 2));
         panel.add(jLabel);
@@ -58,7 +68,7 @@ public class TcpClient {
 
 
 
-    private static void drawImage(final byte[] buffer1) {
+    private  void drawImage(final byte[] buffer1) {
         BufferedImage image = new BufferedImage(176,144,BufferedImage.TYPE_INT_RGB);
         ByteBuffer buffer = ByteBuffer.wrap(buffer1);
         int[] rgbArray = new int[25344];
