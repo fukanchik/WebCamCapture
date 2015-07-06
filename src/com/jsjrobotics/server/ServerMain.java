@@ -9,23 +9,17 @@ public class ServerMain {
 
     private  TrasmitController trasmitController;
 
-    private  ConnectedListener listener1 = new ConnectedListener() {
+    private  ConnectedListener listener = new ConnectedListener() {
         @Override
         public void connectionInitiated(int socketIndex) {
             launchTransmitController();
         }
     };
 
-    private  ConnectedListener listener2 = new ConnectedListener() {
-        @Override
-        public void connectionInitiated(int socketIndex) {
-            launchTransmitController();
-        }
-    };
 
     public  void start() throws IOException {
-        TcpServer server1 = new TcpServer(4445, listener1);
-        TcpServer server2 = new TcpServer(4446, listener2);
+        TcpServer server1 = new TcpServer(4445, listener);
+        TcpServer server2 = new TcpServer(4446, listener);
         servers.add(server1);
         servers.add(server2);
         server1.start();

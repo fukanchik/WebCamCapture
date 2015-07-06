@@ -5,6 +5,8 @@ import com.jsjrobotics.ui.UiBuilder;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -26,13 +28,13 @@ public class TcpClient{
         Runnable r = new Runnable() {
             @Override
             public void run() {
-                startClient(port,jLabel);
+                startClient(port);
             }
         };
         Thread t = new Thread(r);
         t.start();
     }
-    private  void startClient(int port, JLabel jLabel){
+    private  void startClient(int port){
         try{
             InetAddress address = InetAddress.getByName("10.89.196.73");
             Socket socket = new Socket(address,port);
@@ -61,12 +63,19 @@ public class TcpClient{
 
 
     private  void drawImage(final byte[] buffer1) {
-        BufferedImage image = new BufferedImage(176,144,BufferedImage.TYPE_INT_RGB);
+        int width = 176;
+        int height = 144;
+        BufferedImage image = new BufferedImage(width,height,BufferedImage.TYPE_3BYTE_BGR);
         ByteBuffer buffer = ByteBuffer.wrap(buffer1);
-        int[] rgbArray = new int[25344];
+        int[] rgbArray = new int[width*height];
         buffer.asIntBuffer().get(rgbArray);
-        image.setRGB(0,0,176,144,rgbArray,0,176);
-        jLabel.setIcon(new ImageIcon(image));
+        image.setRGB(0,0,width,height,rgbArray,0,width);
+        BufferedImage after = new BufferedImage(2*width, 2*height, BufferedImage.TYPE_3BYTE_BGR);
+        AffineTransform at = new AffineTransform();
+        at.scale(2.0, 2.0);
+        AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
+        after = scaleOp.filter(image, after);
+        jLabel.setIcon(new ImageIcon(after));
 
     }
 }

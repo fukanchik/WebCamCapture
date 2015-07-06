@@ -53,6 +53,7 @@ public class TcpServer {
     public void start(){
         serverThread.start();
     }
+
     public void transmit(int[] buffer,int offset,int bytesToWrite){
         if(isConnected()){
             try {
