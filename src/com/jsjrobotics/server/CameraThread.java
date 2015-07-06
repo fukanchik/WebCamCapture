@@ -11,12 +11,14 @@ public class CameraThread extends Thread {
     private final TrasmitController controller;
     private final boolean readyToStart;
     private final int threadNumber;
-    public CameraThread(int threadNumber,TrasmitController controller,Webcam webcam){
+    private final TcpServer server;
+    public CameraThread(int threadNumber,TrasmitController controller,Webcam webcam, TcpServer server){
         super("CameraThread:"+threadNumber);
         this.threadNumber = threadNumber;
         this.webcam = webcam;
         this.controller = controller;
-        readyToStart = controller != null && webcam != null;
+        this.server = server;
+        readyToStart = controller != null && webcam != null && server!= null;
     }
 
     @Override
@@ -38,11 +40,15 @@ public class CameraThread extends Thread {
             }
             image.getRGB(0, 0, image.getWidth(), image.getHeight(), buffer, 0, image.getWidth());
             //System.out.println("Width / Height  -  "+image.getWidth() + " - "+image.getHeight());
-            controller.transmit(threadNumber,buffer,0,width*height);
+            controller.transmit(server,threadNumber,buffer,0,width*height);
         }
     }
 
     public boolean readyToStart() {
         return readyToStart;
+    }
+
+    public TcpServer getServer(){
+        return server;
     }
 }

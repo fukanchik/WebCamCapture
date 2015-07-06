@@ -1,34 +1,41 @@
 package com.jsjrobotics.server;
 
-import com.jsjrobotics.server.ConnectedListener;
-import com.jsjrobotics.server.TcpServer;
-import com.jsjrobotics.server.TrasmitController;
-
 import java.io.IOException;
-import java.net.Socket;
+import java.util.ArrayList;
 
 public class ServerMain {
     private  int controllerInstances = 0;
-    private  TcpServer server;
+    private ArrayList<TcpServer> servers = new ArrayList<>();
 
     private  TrasmitController trasmitController;
 
-    private  ConnectedListener listener = new ConnectedListener() {
+    private  ConnectedListener listener1 = new ConnectedListener() {
         @Override
         public void connectionInitiated(int socketIndex) {
-            launchTransmitController(server);
+            launchTransmitController();
+        }
+    };
+
+    private  ConnectedListener listener2 = new ConnectedListener() {
+        @Override
+        public void connectionInitiated(int socketIndex) {
+            launchTransmitController();
         }
     };
 
     public  void start() throws IOException {
-        server = new TcpServer(4445,listener);
-        launchTransmitController(server);
-        server.start();
+        TcpServer server1 = new TcpServer(4445, listener1);
+        TcpServer server2 = new TcpServer(4446, listener2);
+        servers.add(server1);
+        servers.add(server2);
+        server1.start();
+        server2.start();
+        launchTransmitController();
     }
 
-    private  void launchTransmitController(TcpServer server){
+    private  void launchTransmitController(){
         if(trasmitController == null) {
-            trasmitController = new TrasmitController("TransmitController"+controllerInstances, server);
+            trasmitController = new TrasmitController("TransmitController"+controllerInstances, servers);
             controllerInstances += 1;
             trasmitController.start();
         }
