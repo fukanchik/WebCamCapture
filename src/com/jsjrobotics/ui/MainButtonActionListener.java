@@ -3,6 +3,7 @@ package com.jsjrobotics.ui;
 import com.jsjrobotics.client.TcpClient;
 import com.jsjrobotics.server.ServerMain;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,7 +34,19 @@ public abstract class MainButtonActionListener implements ActionListener {
     protected ActionListener startWebcamClientActionListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            new TcpClient().start();
+            JPanel panel = new JPanel(new GridLayout(0, 2));
+            JLabel camera1 = new JLabel();
+            JLabel camera2 = new JLabel();
+
+            panel.add(camera1);
+            panel.add(camera2);
+
+            JFrame frame = UiBuilder.buildClientFrame();
+            frame.getContentPane().add(panel);
+            frame.setVisible(true);
+
+            new TcpClient(4445,camera1).start();
+            new TcpClient(4446,camera2).start();
         }
     };
 

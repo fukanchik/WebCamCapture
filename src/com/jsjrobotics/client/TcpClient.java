@@ -15,31 +15,26 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
 public class TcpClient{
-    private  JFrame frame;
-    private  JLabel jLabel;
-    private  JPanel panel;
+    private final JLabel jLabel;
+    private final int port;
 
+    public TcpClient(int port, JLabel label){
+        this.jLabel = label;
+        this.port = port;
+    }
     public  void start(){
         Runnable r = new Runnable() {
             @Override
             public void run() {
-                startClient();
+                startClient(port,jLabel);
             }
         };
         Thread t = new Thread(r);
         t.start();
     }
-    private  void startClient(){
-        jLabel = new JLabel();
-        panel = new JPanel(new GridLayout(0, 2));
-        panel.add(jLabel);
-        frame = UiBuilder.buildClientFrame();
-        frame.getContentPane().add(panel);
-        frame.setVisible(true);
-
+    private  void startClient(int port, JLabel jLabel){
         try{
-            InetAddress address = InetAddress.getByName("10.89.196.77");
-            int port = 4445;
+            InetAddress address = InetAddress.getByName("10.89.196.73");
             Socket socket = new Socket(address,port);
             InputStream inputStream = socket.getInputStream();
             byte[] buffer1 = new byte[25344*4];
@@ -59,9 +54,6 @@ public class TcpClient{
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        finally {
-            frame.dispose();
         }
     }
 
