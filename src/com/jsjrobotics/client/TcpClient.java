@@ -36,7 +36,7 @@ public class TcpClient{
     }
     private  void startClient(int port){
         try{
-            InetAddress address = InetAddress.getByName("10.89.196.73");
+            InetAddress address = InetAddress.getByName("10.89.196.132");
             Socket socket = new Socket(address,port);
             InputStream inputStream = socket.getInputStream();
             byte[] buffer1 = new byte[25344*4];

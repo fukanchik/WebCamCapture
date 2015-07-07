@@ -34,12 +34,20 @@ public abstract class MainButtonActionListener implements ActionListener {
     protected ActionListener startWebcamClientActionListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            JPanel panel = new JPanel(new GridLayout(0, 2));
+            JPanel panel = new JPanel(new GridLayout(2, 3));
             JLabel camera1 = new JLabel();
             JLabel camera2 = new JLabel();
+            JLabel camera3 = new JLabel();
+            JLabel camera4 = new JLabel();
+            JLabel camera5 = new JLabel();
+
 
             panel.add(camera1);
             panel.add(camera2);
+            panel.add(camera3);
+            panel.add(camera4);
+            panel.add(camera5);
+
 
             JFrame frame = UiBuilder.buildClientFrame();
             frame.getContentPane().add(panel);
@@ -47,6 +55,11 @@ public abstract class MainButtonActionListener implements ActionListener {
 
             new TcpClient(4445,camera1).start();
             new TcpClient(4446,camera2).start();
+            new TcpClient(4447,camera3).start();
+            new TcpClient(4448,camera4).start();
+            new TcpClient(4449,camera5).start();
+
+
         }
     };
 

@@ -1,14 +1,22 @@
 package com.jsjrobotics.server;
 
+import com.github.sarxos.webcam.Webcam;
+
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ServerMain {
-    private  int controllerInstances = 0;
+    private final int firstPort = 4445;
+    private final List<Webcam> webcams;
+    private int controllerInstances = 0;
     private ArrayList<TcpServer> servers = new ArrayList<>();
 
     private  TrasmitController trasmitController;
 
+    public ServerMain(){
+        webcams = Webcam.getWebcams();
+    }
     private  ConnectedListener listener = new ConnectedListener() {
         @Override
         public void connectionInitiated(int socketIndex) {
@@ -18,18 +26,19 @@ public class ServerMain {
 
 
     public  void start() throws IOException {
-        TcpServer server1 = new TcpServer(4445, listener);
-        TcpServer server2 = new TcpServer(4446, listener);
-        servers.add(server1);
-        servers.add(server2);
-        server1.start();
-        server2.start();
+        List<Webcam> webcams = Webcam.getWebcams();
+        for(int index=0; index<webcams.size(); index++){
+            TcpServer server = new TcpServer(firstPort+index, listener);
+            server.start();
+            servers.add(server);
+
+        }
         launchTransmitController();
     }
 
     private  void launchTransmitController(){
         if(trasmitController == null) {
-            trasmitController = new TrasmitController("TransmitController"+controllerInstances, servers);
+            trasmitController = new TrasmitController("TransmitController"+controllerInstances, servers,webcams);
             controllerInstances += 1;
             trasmitController.start();
         }
