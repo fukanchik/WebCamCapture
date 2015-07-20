@@ -16,11 +16,11 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
-public class TcpClient{
+public class TcpClientMain {
     private final JLabel jLabel;
     private final int port;
 
-    public TcpClient(int port, JLabel label){
+    public TcpClientMain(int port, JLabel label){
         this.jLabel = label;
         this.port = port;
     }
@@ -36,7 +36,7 @@ public class TcpClient{
     }
     private  void startClient(int port){
         try{
-            InetAddress address = InetAddress.getByName("10.89.196.132");
+            InetAddress address = InetAddress.getByName("192.168.0.211");
             Socket socket = new Socket(address,port);
             InputStream inputStream = socket.getInputStream();
             byte[] buffer1 = new byte[25344*4];

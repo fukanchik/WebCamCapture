@@ -1,6 +1,7 @@
 package com.jsjrobotics.ui;
 
-import com.jsjrobotics.client.TcpClient;
+import com.jsjrobotics.client.TcpClientMain;
+import com.jsjrobotics.lasers.LaserControlMain;
 import com.jsjrobotics.server.ServerMain;
 
 import javax.swing.*;
@@ -19,6 +20,13 @@ public abstract class MainButtonActionListener implements ActionListener {
     public Component getParent(){
         return parent;
     }
+
+    protected ActionListener startLaserSwitchesActionListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            new LaserControlMain().start();
+        }
+    };
 
     protected ActionListener startWebcamServerActionListener = new ActionListener() {
         @Override
@@ -53,11 +61,11 @@ public abstract class MainButtonActionListener implements ActionListener {
             frame.getContentPane().add(panel);
             frame.setVisible(true);
 
-            new TcpClient(4445,camera1).start();
-            new TcpClient(4446,camera2).start();
-            new TcpClient(4447,camera3).start();
-            new TcpClient(4448,camera4).start();
-            new TcpClient(4449,camera5).start();
+            new TcpClientMain(4445,camera1).start();
+            new TcpClientMain(4446,camera2).start();
+            new TcpClientMain(4447,camera3).start();
+            new TcpClientMain(4448,camera4).start();
+            new TcpClientMain(4449,camera5).start();
 
 
         }

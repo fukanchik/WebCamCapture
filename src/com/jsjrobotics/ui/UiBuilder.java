@@ -1,5 +1,7 @@
 package com.jsjrobotics.ui;
 
+import com.jsjrobotics.Utils;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -13,6 +15,12 @@ public class UiBuilder {
     private static int DEFAULT_FRAME_WIDTH = 500;
     private static int DEFAULT_FRAME_HEIGHT = 500;
 
+
+    public static JFrame buildLaserControlFrame() {
+        JFrame frame = getClosableFrame();
+        frame.setSize(176, 144);
+        return frame;
+    }
 
     public static JFrame buildClientFrame() {
         JFrame frame = getClosableFrame();
@@ -56,8 +64,8 @@ public class UiBuilder {
         try {
             BufferedImage selection1 = ImageIO.read(new File("presentation_portal.png"));
             BufferedImage selection2 = ImageIO.read(new File("tuning_chamber.png"));
-            attachButtonIcon(selection1,button1);
-            attachButtonIcon(selection2,button2);
+            Utils.attachButtonIcon(selection1, button1);
+            Utils.attachButtonIcon(selection2, button2);
             attachOnClickListener(1,button1);
             attachOnClickListener(2,button2);
         } catch (IOException e) {
@@ -69,15 +77,15 @@ public class UiBuilder {
     private static void attachOnClickListener(int buttonIndex, JButton button) {
         switch (buttonIndex){
             case 1:
-                button.addActionListener(getTuningChamberSelectedListener(button));
+                button.addActionListener(getPresentationPortalSelectedListener(button));
                 break;
             case 2:
-                button.addActionListener(getPresentationPortalSelectedListener(button));
+                button.addActionListener(getTuningChamberSelectedListener(button));
                 break;
         }
     }
 
-    private static ActionListener getPresentationPortalSelectedListener(JButton button) {
+    private static ActionListener getTuningChamberSelectedListener(JButton button) {
         MainButtonActionListener presentationPortalSelectedListener = new MainButtonActionListener(button) {
 
             @Override
@@ -91,13 +99,16 @@ public class UiBuilder {
         return presentationPortalSelectedListener;
     }
 
-    private static ActionListener getTuningChamberSelectedListener(JButton button) {
+    private static ActionListener getPresentationPortalSelectedListener(JButton button) {
         MainButtonActionListener tuningChamberSelectedListener = new MainButtonActionListener(button) {
 
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 JPopupMenu popup = new JPopupMenu();
-                JMenuItem menuItem = new JMenuItem("Webcam Server");
+                JMenuItem menuItem = new JMenuItem("Laser Switches");
+                menuItem.addActionListener(startLaserSwitchesActionListener);
+                popup.add(menuItem);
+                menuItem = new JMenuItem("Webcam Server");
                 menuItem.addActionListener(startWebcamServerActionListener);
                 popup.add(menuItem);
                 menuItem = new JMenuItem("Webcam Client");
@@ -109,10 +120,6 @@ public class UiBuilder {
         return tuningChamberSelectedListener;
     }
 
-    private static void attachButtonIcon(BufferedImage selection1, JButton button1) {
-        ImageIcon image = new ImageIcon(selection1);
-        button1.setAlignmentX(.5f);
-        button1.setAlignmentY(.5f);
-        button1.setIcon(image);
-    }
+
+
 }
